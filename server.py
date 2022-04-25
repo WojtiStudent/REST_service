@@ -23,4 +23,4 @@ api.add_resource(Statistics, "/statistics/<string:filename>/<string:statistic_na
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
