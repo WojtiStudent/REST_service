@@ -1,7 +1,15 @@
 # REST_service
 Deepsense.ai Recruitment task - Software Engineer (Python)
+---------------------------------
+##### Table of contents #####
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Important](#important)
+-------------------------------
+
 ## Introduction ##
-This is a REST service in Python language which will accept a tabular data file as an input and return following data about the
+This is a REST service in Python which will accept a tabular data file as an input and return following data about the
 file:
  - number of rows
  - number of columns
@@ -28,7 +36,7 @@ percentile_90             | 90th percentile
 percent_of_missing_values | % of missing values
 
 
-## Instalation ##
+## Installation ##
 Python version: 3.9.11
 
 1. Get whole project on your computer.
@@ -59,6 +67,7 @@ python server.py
     ```bash
     python testtool.py -m GET -p <filename-with-extension> -s <statistic-name>
     ```
-    
+## Important ##
+- The server is hard-coded to run on port 5000.
     
     
