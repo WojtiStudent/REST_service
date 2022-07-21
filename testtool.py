@@ -1,56 +1,82 @@
-import argparse
 import requests
+from argparse import ArgumentParser
 from pprint import pprint
 
-BASE = "http://127.0.0.1:5000/"
-
-parser = argparse.ArgumentParser(description="Test tool for the specyfic REST API")
+parser = ArgumentParser(description="Test tool for the specyfic REST API.")
 
 parser.add_argument(
     "-m",
     "--method",
     choices=["GET", "POST", "DELETE"],
     default="GET",
-    help="Method to test",
-    required=True,
+    help="Method to test. Default GET.",
 )
 parser.add_argument(
-    "-p", "--path", type=str, help="Path to file or just filename", required=True
+    "-d",
+    "--destination",
+    type=str,
+    default="127.0.0.1:5000",
+    help="Adress to which send request. Default 127.0.0.1:5000.",
 )
-parser.add_argument("-s", "--statistic", type=str, help="File to upload")
+parser.add_argument(
+    "-p", "--path", type=str, help="Path to file. Used if method == POST."
+)
+parser.add_argument(
+    "-s",
+    "--statistic",
+    type=str,
+    help="Statistic to get. Used if method == GET and file_id is passed.",
+)
+parser.add_argument(
+    "-id",
+    "--file_id",
+    type=str,
+    help="ID of file. Used if method == GET or method == DELETE.",
+)
+parser.add_argument(
+    "-f", "--filename", type=str, help="Filename to search. Used if method == GET."
+)
 
 
 args = parser.parse_args()
 
 
 if __name__ == "__main__":
-    filename = args.path[args.path.rfind("/") + 1 :]
+    args.destination = "http://" + args.destination
 
     if args.method == "GET":
-        if args.statistic:
-            response = requests.get(
-                BASE + "statistics/" + filename + "/" + args.statistic
-            )
+        if args.file_id:
+            if args.statistic:
+                response = requests.get(
+                    args.destination
+                    + "/"
+                    + "statistics/"
+                    + args.file_id
+                    + "/"
+                    + args.statistic
+                )
+            else:
+                response = requests.get(args.destination + "/" + "file" + "/" + args.file_id)
+        elif args.filename:
+            response = requests.get(args.destination + "/" + "file" + "/" + args.filename)
         else:
-            response = requests.get(BASE + "file/" + filename)
+            raise Exception(
+                "Nor file_id neither filename has been passed while method is GET"
+            )
+
     elif args.method == "POST":
-        if args.statistic:
-            print("Can not upload file with statistic parameter, try without it")
-            exit(1)
-        else:
+        if args.path:
+            filename = args.path[args.path.rfind("/") + 1 :]
             response = requests.post(
-                BASE + "file/" + filename, files={"files": open(args.path, "rb")}
+                args.destination + "/" + "file", files={"file": open(args.path, "rb")}
             )
-    elif args.method == "DELETE":
-        if args.statistic:
-            print(
-                "Can not delete specyfic statistic of file - you have to delete whole file."
-            )
-            exit(1)
         else:
-            response = requests.delete(BASE + "file/" + filename)
-    else:
-        print("Wrong method")
-        exit(1)
+            raise Exception("path has not been passed while methos id POST")
+
+    elif args.method == "DELETE":
+        if args.file_id:
+            response = requests.delete(args.destination + "/" + "file/" + args.file_id)
+        else:
+            raise Exception("file_id has not been passed while method is DELETE")
 
     pprint(response.json())
