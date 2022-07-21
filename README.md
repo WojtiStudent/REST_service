@@ -4,7 +4,8 @@
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Important](#important)
+- [Server flags](#server-flags)
+- [Testtool flags](#testtool-flags)
 -------------------------------
 
 ## Introduction ##
